@@ -6,11 +6,12 @@ defmodule MonadsTest do
     x = 20.0
     ht = ht(x)
     h = h(x)
-    assert {h, _} = ht
+    assert {^h, _} = ht
   end
 
   test "commutation digram" do
     x = 20.0
-    assert x |> comp((lift &f/1), lift(&g/1)).() == x |> (lift &(f(g(&1)))).()
+    assert x |> comp((lift &f/1), lift(&g/1)).() == x |>
+      (lift fn(y) -> f(g(y)) end).()
   end
 end

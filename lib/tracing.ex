@@ -8,15 +8,15 @@ defmodule Tracing do
   def g(x), do: x+3.0
   def h(x), do: x |> g |> f # == f(g(x))
 
-  def ft(x), do: {f(x), "call f with #{x}"}
-  def gt(x), do: {g(x), "call g with #{x}"}
+  def ft(x), do: {f(x), "call f with #{x}."}
+  def gt(x), do: {g(x), "call g with #{x}."}
   def ht(x), do: comp(&ft/1, &gt/1).(x)
 
   @spec bind(debug_fun(a)) :: trace_fun(a) when a: var
   def bind(tfun) do
     fn({y, s1}) ->
       {z, s2} = tfun.(y)
-      {z, s1 <> "." <> s2}
+      {z, s1 <> s2}
     end
   end
 
