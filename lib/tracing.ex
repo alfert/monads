@@ -12,17 +12,23 @@ defmodule Tracing do
   def gt(x), do: {g(x), "call g with #{x}."}
   def ht(x), do: comp(&ft/1, &gt/1).(x)
 
-  @spec bind(debug_fun(a)) :: trace_fun(a) when a: var
-  def bind(tfun) do
+  @spec bind1(debug_fun(a)) :: trace_fun(a) when a: var
+  def bind1(tfun) do
     fn({y, s1}) ->
       {z, s2} = tfun.(y)
       {z, s1 <> s2}
     end
   end
 
+  @spec bind(trace_t(a), debug_fun(a)) :: trace_t(a) when a: var
+  def bind({y, s1}, tfun) do
+    {z, s2} = tfun.(y)
+    {z, s1 <> s2}
+  end
+
   @spec comp(debug_fun(a), debug_fun(a)) :: debug_fun(a) when a: var
   def comp(ft, gt) do
-    fn(x) -> x |> gt.() |> (bind ft).() end
+    fn(x) -> x |> gt.() |> bind(ft) end
   end
 
   @spec unit(a) :: trace_t(a) when a: var
